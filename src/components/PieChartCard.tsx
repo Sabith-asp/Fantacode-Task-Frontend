@@ -8,6 +8,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { getSaleStats } from "../Api/dashboardApi";
+import Loader from "./Loader";
 
 const COLORS = ["#6366F1", "#22C55E", "#F59E0B", "#EF4444"];
 
@@ -38,36 +39,39 @@ const PieChartCard = () => {
     fetchCategorySales();
   }, []);
 
-  if (loading) return <div className="text-center">Loading chart...</div>;
-  if (error)
-    return (
-      <div className="text-center text-red-500">Error loading chart data</div>
-    );
-
   return (
     <div className="w-full bg-white rounded-xl shadow-md p-4 sm:p-6">
       <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-700 text-center sm:text-left">
         Sales by Category
       </h2>
-      <div className="w-full h-[250px] sm:h-[300px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              dataKey="value"
-              data={data}
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              label
-            >
-              {data.map((_, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+
+      <div className="w-full h-[250px] sm:h-[300px] flex items-center justify-center">
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <div className="text-center text-red-500">
+            Error loading chart data
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                dataKey="value"
+                data={data}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                label
+              >
+                {data.map((_, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );
